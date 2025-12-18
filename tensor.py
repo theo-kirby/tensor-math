@@ -4,7 +4,8 @@
 # implement views, pretty print
 
 from __future__ import annotations
-from typing import Union
+from typing import Union, Callable
+from random import uniform
 import copy
 
 Numeric = Union[int, float]
@@ -89,14 +90,32 @@ class Tensor():
 
             return f"tensor: ({unflatten(self.values, self.shape)})"
 
+    # return a deep copy of the tensor
     def copy(self) -> Tensor:
         return copy.copy(self)
+    
+    # return a tensor with values set to the result of the function applied to each element
+    def map(self, f: Callable) -> Tensor:
+        t = self.copy()
+        t.values = [f(element) for element in t.values]
+        return t
+    
+    # 1d array of values
+    def to_array(self) -> list:
+        return self.values
 
+    # fill all values with a scalar value
     def fill(self, value: float):
 
         for i in range(self.size):
             self.values[i] = value
+    
+    # fill all values with random values between -1 and 1
+    def randomize(self): # return copy instead?
+        for i in range(self.size):
+            self.values[i] = uniform(-1, 1)
 
+    # return a tensor with values set to these values plus the scalar value
     def scalar_add(self, value: float) -> Tensor:
 
         t = self.copy()
@@ -104,6 +123,7 @@ class Tensor():
 
         return t
 
+    # return a tensor with values set to these values minus the scalar value
     def scalar_sub(self, value: float) -> Tensor:
 
         t = self.copy()
@@ -111,6 +131,7 @@ class Tensor():
 
         return t
 
+    # return a tensor with values set to these values multiplied by the scalar value
     def scalar_mul(self, value: float) -> Tensor:
 
         t = self.copy()
@@ -118,6 +139,7 @@ class Tensor():
 
         return t
 
+    # return a tensor with values set to these values added element wise to the other tensors values
     def ew_add(self, other: Tensor) -> Tensor:
 
         assert self.shape == other.shape
@@ -131,6 +153,7 @@ class Tensor():
         t.values = values
         return t
 
+    # return a tensor with values set to these values subtracted element wise from the other tensors values
     def ew_sub(self, other: Tensor) -> Tensor:
 
         assert self.shape == other.shape
@@ -144,6 +167,7 @@ class Tensor():
         t.values = values
         return t
 
+    # return a tensor with values set to these values multiplied element wise by the other tensors values
     def ew_mul(self, other: Tensor) -> Tensor:
         #hadmard prod
         assert self.shape == other.shape
@@ -158,6 +182,7 @@ class Tensor():
         return t
 
     # TODO: implement batch / stacked matmul
+    # return a tensor with values set to these values multiplied matrix wise by the other tensors values 
     def mat_mul(self, other: Tensor) -> Tensor:
 
         self_rows = self.shape[0]
@@ -188,7 +213,7 @@ class Tensor():
 
         return t
 
-    # 2d
+    # 2d transpose (invert the tensor shape)
     def transpose(self):
 
         # can only transpose matricies
@@ -238,6 +263,13 @@ class Tensor():
         for e in l:
             r *= e 
         return r 
+    
+    @staticmethod
+    # init a tensor from a list of values
+    def from_array(array: list) -> Tensor:
+        t = Tensor((len(array), 1))
+        t.values = array
+        return t
 
 
 
