@@ -62,6 +62,8 @@ class Tensor():
     def __matmul__(self, other: Operand) -> Tensor:
         if isinstance(other, Tensor):
             return self.mat_mul(other)
+        else: 
+            raise TypeError("other must be a Tensor")
     
     def __repr__(self) -> str:
 
@@ -193,7 +195,6 @@ class Tensor():
         other_cols = other.shape[1]
 
         # can only matmul 2d matricies where cols of a = rows of b
-        assert isinstance(other, Tensor)
         assert self.dim == 2 and other.dim == 2
         assert self_cols == other_rows
 
