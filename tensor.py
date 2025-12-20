@@ -102,7 +102,9 @@ class Tensor():
     
     # 1d array of values
     def to_array(self) -> list:
-        return self.values
+        assert self.dim == 1
+        values = self.values.copy()
+        return values
 
     # fill all values with a scalar value
     def fill(self, value: float):
